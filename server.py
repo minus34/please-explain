@@ -29,7 +29,6 @@ def main():
     table_name = "display_geoms"
 
     sql = "SELECT division_name || ', ' || state AS name, percent, pop_percent, " \
-          "(nationalist_party_votes::float/islamic_australians::float)::numeric(5,1) AS ratio, " \
           "ST_AsGeoJSON(geom, 3) AS geometry " \
           "FROM govhack2016.commonwealth_electorates_pe"
 
