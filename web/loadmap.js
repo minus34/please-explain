@@ -35,8 +35,8 @@ function init() {
 
     //Set the view to a given center and zoom
     startPoint = new L.LatLng(-27.47, 153.10)
-    map1.setView(startPoint, 9);
-    map2.setView(startPoint, 9);
+    map1.setView(startPoint, 10);
+    map2.setView(startPoint, 10);
 
     // set move events to update the other map when we move this one
     map1.on('moveend', function(e) {
@@ -92,6 +92,19 @@ function init() {
     map2.attributionControl.addAttribution('&copy; <a href="http://www.abs.gov.au/websitedbs/censushome.nsf/4a256353001af3ed4b2562bb00121564/datapacksdetails?opendocument&navpos=250">ABS</a>');
     map2.attributionControl.addAttribution('&copy; <a href="http://vtr.aec.gov.au/SenateDownloadsMenu-20499-Csv.htm">AEC</a>');
 
+    info1 = L.control();
+    info1.onAdd = function (map1) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+    };
+    info1.update = function (props) {
+        //this._div.setStyle((props ? { visibility : 'visible' } : { visibility : 'hidden' }))
+        // this._div.visibility = (props ? visible : hidden);
+        this._div.innerHTML = (props ? '<b>Nationalist voters</b> : ' + props.percent.toLocaleString(['en-AU']) + '%' : '');
+    };
+    info1.addTo(map1);
+
     info2 = L.control();
     info2.onAdd = function (map2) {
         this._div = L.DomUtil.create('div', 'info');
@@ -99,25 +112,40 @@ function init() {
         return this._div;
     };
     info2.update = function (props) {
-        this._div.innerHTML = (props ? '<b>' + props.name + '</b><br/><b>Nationalist voters</b> : '
-                                             + props.percent.toLocaleString(['en-AU'])
-                                             + '%</b><br/><b>Islamic People</b> : '
-                                             + props.pop_percent.toLocaleString(['en-AU']) + '%' : 'pick a boundary');
+        //this._div.visibility = (props ? 'visible' : 'hidden');
+        this._div.innerHTML = (props ? '<b>Islamic</b> : ' + props.pop_percent.toLocaleString(['en-AU']) + '%' : '');
     };
     info2.addTo(map2);
 
-    // //Get a new set of boundaries when map panned or zoomed
-    // //TO DO: Handle map movement due to popup
-    // map1.on('moveend', function (e) {
-    //     getBoundaries();
-    // });
-    //
-    // map1.on('zoomend', function (e) {
-    //     map1.closePopup();
-    //     //getBoundaries();
-    // });
+    info3 = L.control();
+    info3.setPosition('bottomleft');
+    info3.onAdd = function (map1) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+    };
+    info3.update = function (props) {
+        this._div.innerHTML = (props ? '% of people in <b>' + props.name + '</b> that are...' : '<b>pick a boundary</b>');
+    };
+    info3.addTo(map1);
 
-    //Get the first set of boundaries
+
+
+    // info2 = L.control();
+    // info2.onAdd = function (map2) {
+    //     this._div = L.DomUtil.create('div', 'info');
+    //     this.update();
+    //     return this._div;
+    // };
+    // info2.update = function (props) {
+    //     this._div.innerHTML = (props ? '<b>' + props.name + '</b><br/><b>Nationalist voters</b> : '
+    //     + props.percent.toLocaleString(['en-AU'])
+    //     + '%</b><br/><b>Islamic People</b> : '
+    //     + props.pop_percent.toLocaleString(['en-AU']) + '%' : 'pick a boundary');
+    // };
+    // info2.addTo(map2);
+
+    //Get the boundaries
     getBoundaries();
 }
 
@@ -187,7 +215,9 @@ function highlightFeature1(e) {
         layer1.bringToFront();
     }
 
+    info1.update(layer1.feature.properties);
     info2.update(layer1.feature.properties);
+    info3.update(layer1.feature.properties);
 }
 
 function highlightFeature2(e) {
@@ -202,24 +232,26 @@ function highlightFeature2(e) {
 
     var match = geojsonLayer1.eachLayer(function(layer1) {
         if (layer1.feature.properties.name == layer2.feature.properties.name) {
-        layer1.setStyle({
-            color: '#444',
-            weight: 2,
-            opacity: 0.9,
-            fillOpacity: 0.7
-        });
+            layer1.setStyle({
+                color: '#444',
+                weight: 2,
+                opacity: 0.9,
+                fillOpacity: 0.7
+            });
 
-        if (!L.Browser.ie && !L.Browser.opera) {
-            layer1.bringToFront();
+            if (!L.Browser.ie && !L.Browser.opera) {
+                layer1.bringToFront();
+            }
         }
-    }
     });
 
-if (!L.Browser.ie && !L.Browser.opera) {
+    if (!L.Browser.ie && !L.Browser.opera) {
         layer2.bringToFront();
     }
 
+    info1.update(layer2.feature.properties);
     info2.update(layer2.feature.properties);
+    info3.update(layer2.feature.properties);
 }
 
 function resetHighlight1(e) {
@@ -232,7 +264,9 @@ function resetHighlight1(e) {
         }
     });
 
+    info1.update();
     info2.update();
+    info3.update();
 }
 
 function resetHighlight2(e) {
@@ -245,7 +279,9 @@ function resetHighlight2(e) {
         }
     });
 
+    info1.update();
     info2.update();
+    info3.update();
 }
 
 function onEachFeature1(feature, layer) {
