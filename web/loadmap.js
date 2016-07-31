@@ -1,11 +1,18 @@
-var restUrl = "geoms.json";
+"use strict";
+
+var restUrl = 'geoms.json';
 var map1 = null;
 var map2 = null;
-var info = null;
+var info1 = null;
+var info2 = null;
+var info3 = null;
 var geojsonLayer1 = null;
 var geojsonLayer2 = null;
 var minZoom = 4;
 var maxZoom = 10;
+var lastClickedLayer1 = null
+var lastClickedLayer2 = null
+
 
 var colours = ['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824'];
 var themeGrades = [2, 4, 6, 8, 10, 12, 14]
@@ -34,7 +41,7 @@ function init() {
     map2.addLayer(tiles2);
 
     //Set the view to a given center and zoom
-    startPoint = new L.LatLng(-27.47, 153.10)
+    var startPoint = new L.LatLng(-27.47, 153.10)
     map1.setView(startPoint, 10);
     map2.setView(startPoint, 10);
 
@@ -129,22 +136,6 @@ function init() {
     };
     info3.addTo(map1);
 
-
-
-    // info2 = L.control();
-    // info2.onAdd = function (map2) {
-    //     this._div = L.DomUtil.create('div', 'info');
-    //     this.update();
-    //     return this._div;
-    // };
-    // info2.update = function (props) {
-    //     this._div.innerHTML = (props ? '<b>' + props.name + '</b><br/><b>Nationalist voters</b> : '
-    //     + props.percent.toLocaleString(['en-AU'])
-    //     + '%</b><br/><b>Islamic People</b> : '
-    //     + props.pop_percent.toLocaleString(['en-AU']) + '%' : 'pick a boundary');
-    // };
-    // info2.addTo(map2);
-
     //Get the boundaries
     getBoundaries();
 }
@@ -173,8 +164,6 @@ function style2(feature) {
     };
 }
 
-
-
  // get color depending on ratio of count versus max value
  function getColor(d) {
    return d > 12 ? colours[6]:
@@ -187,6 +176,13 @@ function style2(feature) {
  }
 
 function highlightFeature1(e) {
+    if(lastClickedLayer1 || lastClickedLayer2){
+       geojsonLayer1.resetStyle(lastClickedLayer1);
+       geojsonLayer2.resetStyle(lastClickedLayer2);
+       lastClickedLayer1 = null;
+       lastClickedLayer2 = null;
+    }
+
     var layer1 = e.target;
 
     layer1.setStyle({
@@ -208,6 +204,8 @@ function highlightFeature1(e) {
             if (!L.Browser.ie && !L.Browser.opera) {
                 layer2.bringToFront();
             }
+
+            lastClickedLayer2 = layer2;
         }
     });
 
@@ -215,12 +213,21 @@ function highlightFeature1(e) {
         layer1.bringToFront();
     }
 
+    lastClickedLayer1 = layer1;
+
     info1.update(layer1.feature.properties);
     info2.update(layer1.feature.properties);
     info3.update(layer1.feature.properties);
 }
 
 function highlightFeature2(e) {
+    if(lastClickedLayer1 || lastClickedLayer2){
+       geojsonLayer1.resetStyle(lastClickedLayer1);
+       geojsonLayer2.resetStyle(lastClickedLayer2);
+       lastClickedLayer1 = null;
+       lastClickedLayer2 = null;
+    }
+
     var layer2 = e.target;
 
     layer2.setStyle({
@@ -242,12 +249,16 @@ function highlightFeature2(e) {
             if (!L.Browser.ie && !L.Browser.opera) {
                 layer1.bringToFront();
             }
+
+            lastClickedLayer1 = layer1;
         }
     });
 
     if (!L.Browser.ie && !L.Browser.opera) {
         layer2.bringToFront();
     }
+
+    lastClickedLayer2 = layer2;
 
     info1.update(layer2.feature.properties);
     info2.update(layer2.feature.properties);
@@ -287,14 +298,16 @@ function resetHighlight2(e) {
 function onEachFeature1(feature, layer) {
     layer.on({
         mouseover: highlightFeature1,
-        mouseout: resetHighlight1
+        mouseout: resetHighlight1,
+        click: highlightFeature1
     });
 }
 
 function onEachFeature2(feature, layer) {
     layer.on({
         mouseover: highlightFeature2,
-        mouseout: resetHighlight2
+        mouseout: resetHighlight2,
+        click: highlightFeature2
     });
 }
 
