@@ -1,6 +1,6 @@
 # please-explain
 
-A GovHack 2016 Project
+(A GovHack 2016 Project)[https://2016.hackerspace.govhack.org/content/please-explain]
 
 ##The Motivation
 
