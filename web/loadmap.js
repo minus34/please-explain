@@ -101,7 +101,7 @@ function init() {
     info1.update = function (props) {
         //this._div.setStyle((props ? { visibility : 'visible' } : { visibility : 'hidden' }))
         // this._div.visibility = (props ? visible : hidden);
-        this._div.innerHTML = (props ? '<b>Nationalist voters</b> : ' + props.percent.toLocaleString(['en-AU']) + '%' : '');
+        this._div.innerHTML = (props ? '<b>Nationalist party voters</b> : ' + props.percent.toLocaleString(['en-AU']) + '%' : '');
     };
     info1.addTo(map1);
 
@@ -113,7 +113,7 @@ function init() {
     };
     info2.update = function (props) {
         //this._div.visibility = (props ? 'visible' : 'hidden');
-        this._div.innerHTML = (props ? '<b>Islamic</b> : ' + props.pop_percent.toLocaleString(['en-AU']) + '%' : '');
+        this._div.innerHTML = (props ? '<b>Muslim</b> : ' + props.pop_percent.toLocaleString(['en-AU']) + '%' : '');
     };
     info2.addTo(map2);
 
