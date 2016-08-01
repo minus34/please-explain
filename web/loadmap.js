@@ -42,8 +42,8 @@ function init() {
 
     //Set the view to a given center and zoom
     var startPoint = new L.LatLng(-27.47, 153.10)
-    map1.setView(startPoint, 10);
-    map2.setView(startPoint, 10);
+    map1.setView(startPoint, 9);
+    map2.setView(startPoint, 9);
 
     // set move events to update the other map when we move this one
     map1.on('moveend', function(e) {
