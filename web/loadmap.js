@@ -22,6 +22,7 @@ function init() {
     //Initialize the map on the "map" div
     map1 = new L.Map('map1', { attributionControl: false });
     map2 = new L.Map('map2', { zoomControl:false });
+    map2.dragging.disable();
 
     // load CartoDB basemap tiles
     var tiles1 = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
@@ -30,7 +31,7 @@ function init() {
         maxZoom: maxZoom
     });
 
-    var tiles2 = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    var tiles2 = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
         subdomains: 'abcd',
         minZoom: minZoom,
@@ -49,9 +50,9 @@ function init() {
     map1.on('moveend', function(e) {
         map2.setView(map1.getCenter(), map1.getZoom());
     });
-    map2.on('moveend', function(e) {
-        map1.setView(map2.getCenter(), map2.getZoom());
-    });
+    // map2.on('moveend', function(e) {
+        // map1.setView(map2.getCenter(), map2.getZoom());
+    // });
 
     //Add legend control
     var legend = L.control({ position: 'bottomright' });
